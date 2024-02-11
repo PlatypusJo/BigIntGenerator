@@ -10,18 +10,19 @@ namespace Lab5DP
     public class BigIntGenerator
     {
         private List<BigInteger> _primeNumbers; // Список простых чисел до 5000.
-        private int _accuracy = 1000000; // Точность разложения для метода проб.
-        public int Accuracy 
+        private int _maxIterations = 1000000; // Максимальное число итераций для метода проб (по умолчанию 1млн.).
+        public int MaxIterations 
         {
-            get => _accuracy;
+            get => _maxIterations;
             set
             {
-                _accuracy = value;
+                _maxIterations = value;
             }
         }
 
         public BigIntGenerator()
         {
+            // Создаю список простых чисел до 5000.
             _primeNumbers = new List<BigInteger>();
             for (int i = 0; i < 5000; i++)
             {
@@ -56,7 +57,55 @@ namespace Lab5DP
         
         public BigInteger GenerateBigPrimeNumber(int length)
         {
+            if (length > 150)
+                throw new ArgumentException("Длина должна быть не больше 150 символов");
+
+            BigInteger bigPrime = GenerateBigNumber(length);
+            if (bigPrime.IsEven)
+                bigPrime++;
+
             return 0;
+        }
+
+        private bool DoMillerTest(BigInteger number)
+        {
+            return false;
+        }
+
+        private bool DoPrimeNumberTest(BigInteger number)
+        {  
+            return false;
+        }
+
+        public void CheckNumberIsPrime(BigInteger number)
+        {
+
+        }
+
+        // Разложение расширенным методом проб (нужно добавить ограничение по итерациям)
+        private List<BigInteger> TrialDivision(BigInteger n)
+        {
+            List<BigInteger> divides = [];
+            int iterationCount = 0;
+            BigInteger div = 2;
+
+            while (n > 1 && iterationCount < _maxIterations)
+            {
+                if (n % div == 0)
+                {
+                    divides.Add(div);
+                    n /= div;
+                }
+                else
+                {
+                    div++;
+                }
+            }
+
+            // Удалить повторы
+            divides = divides.Distinct().ToList();
+
+            return divides;
         }
     }
 }
