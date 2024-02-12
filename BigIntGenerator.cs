@@ -67,19 +67,109 @@ namespace Lab5DP
             return 0;
         }
 
-        private bool DoMillerTest(BigInteger number)
+        public bool DoMillerTest(BigInteger number, BigInteger baseValue)
         {
-            return false;
+            BigInteger buf = number - 1;
+            BigInteger q = 0;
+            BigInteger deduction = 0;
+            BigInteger k = 0;
+
+            while (buf > 1)
+            {
+                if (buf % 2 == 0)
+                {
+                    buf /= 2;
+                    k++;
+                }
+                else
+                {
+                    q = buf;
+                }
+            }
+
+            int i = 0;
+            deduction = BigInteger.ModPow(baseValue, q, number);
+
+            while(i < k)
+            {
+                if ((i == 0 && deduction == 1) || (i >= 0 && deduction == number - 1))
+                {
+                    Console.WriteLine($"Ничего определённого сказать нельзя. Основание: {baseValue}");
+                    return false;
+                }
+                else
+                {
+                    i++;
+                    deduction = BigInteger.ModPow(deduction, 2, number);
+                }
+                
+            }
+
+            Console.WriteLine($"Число {number} составное. Основание: {baseValue}");
+            return true;
         }
 
-        private bool DoPrimeNumberTest(BigInteger number)
+        public bool DoPrimeNumberTest(BigInteger number)
         {  
-            return false;
+            List<BigInteger> factors = [];
+            BigInteger b;
+
+            factors = TrialDivision(number);
+
+            b = 2;
+            int i = 1;
+            
+            while (true)
+            {
+                if (i > factors.Count)
+                {
+                    Console.WriteLine($"{number} простое число");
+                    return true;
+                }
+
+                if (BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / factors[i - 1] , number) != 1 && b < number)
+                {
+                    if (b == number)
+                    {
+                        Console.WriteLine($"{number} не простое");
+                        return false;
+                    }
+                    else
+                    {
+                        i++;
+                        b = 2;
+                    }
+                }
+                else
+                {
+                    b++;
+                }
+            }
         }
 
-        public void CheckNumberIsPrime(BigInteger number)
+        public bool CheckNumberIsPrime(BigInteger number)
         {
+            bool result = false;
 
+            for (int i = 0; i < _primeNumbers.Count; i++)
+            {
+                if (number % _primeNumbers[i] == 0 && number != _primeNumbers[i])
+                {
+                    Console.WriteLine("Число составное");
+                    return result;
+                }
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                result = DoMillerTest(number, _primeNumbers[i]);
+                if (result) 
+                    return !result;
+            }
+
+            result = DoPrimeNumberTest(number);
+
+            return result;
         }
 
         // Разложение расширенным методом проб (нужно добавить ограничение по итерациям)
