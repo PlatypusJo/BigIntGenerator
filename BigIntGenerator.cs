@@ -47,7 +47,7 @@ namespace Lab5DP
                 throw new ArgumentException("Длина должна быть не больше 150 символов");
 
             string number = new Random().Next(1, 10).ToString();
-            for (int i = 1; i <= length; i++)
+            for (int i = 1; i < length; i++)
             {
                 number += new Random().Next(0, 10).ToString();
             }
@@ -60,18 +60,28 @@ namespace Lab5DP
             if (length > 150)
                 throw new ArgumentException("Длина должна быть не больше 150 символов");
 
+            // Генерируем большое число
             BigInteger bigPrime = GenerateBigNumber(length);
+            // Проверяем на чётность
             if (bigPrime.IsEven)
                 bigPrime++;
 
-            return 0;
+            // Добавляем 2 к числу, пока не получим простое.
+            bool isPrime = false;
+            while (!isPrime)
+            {
+                isPrime = IsPrime(bigPrime);
+                if (!isPrime)
+                    bigPrime += 2;
+            }
+
+            return bigPrime;
         }
 
         public bool DoMillerTest(BigInteger number, BigInteger baseValue)
         {
             BigInteger buf = number - 1;
             BigInteger q = 0;
-            BigInteger deduction = 0;
             BigInteger k = 0;
 
             while (buf > 1)
@@ -88,9 +98,9 @@ namespace Lab5DP
             }
 
             int i = 0;
-            deduction = BigInteger.ModPow(baseValue, q, number);
+            BigInteger deduction = BigInteger.ModPow(baseValue, q, number);
 
-            while(i < k)
+            while (i < k)
             {
                 if ((i == 0 && deduction == 1) || (i >= 0 && deduction == number - 1))
                 {
@@ -109,42 +119,28 @@ namespace Lab5DP
             return true;
         }
 
-        public bool DoPrimeNumberTest(BigInteger number)
+        public bool IsPrime(BigInteger number)
         {  
-            List<BigInteger> factors = [];
-            BigInteger b;
-
-            factors = TrialDivision(number);
-
-            b = 2;
+            List<BigInteger> primeFactors = [];
+            primeFactors = TrialDivision(number - 1);
             int i = 1;
-            
-            while (true)
-            {
-                if (i > factors.Count)
-                {
-                    Console.WriteLine($"{number} простое число");
-                    return true;
-                }
+            int r = primeFactors.Count;
 
-                if (BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / factors[i - 1] , number) != 1 && b < number)
-                {
-                    if (b == number)
-                    {
-                        Console.WriteLine($"{number} не простое");
-                        return false;
-                    }
-                    else
-                    {
-                        i++;
-                        b = 2;
-                    }
-                }
-                else
+            while (i <= r)
+            {
+                BigInteger b = 2;
+                while (b < number && !(BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / primeFactors[i - 1], number) != 1))
                 {
                     b++;
                 }
+
+                if (b == number)
+                {
+                    return false;
+                }
+                i++;
             }
+            return true;
         }
 
         public bool CheckNumberIsPrime(BigInteger number)
@@ -167,7 +163,7 @@ namespace Lab5DP
                     return !result;
             }
 
-            result = DoPrimeNumberTest(number);
+            result = IsPrime(number);
 
             return result;
         }
@@ -179,21 +175,39 @@ namespace Lab5DP
             int iterationCount = 0;
             BigInteger div = 2;
 
-            while (n > 1 && iterationCount < _maxIterations)
+            while (n % div == 0)
+            {
+                divides.Add(div);
+                n /= div;
+                Console.WriteLine(div);
+                //iterationCount++;
+            }
+
+            div = 3;
+
+            while (BigInteger.Pow(div, 2) <= n && iterationCount < _maxIterations) // закоментил условие
             {
                 if (n % div == 0)
                 {
                     divides.Add(div);
                     n /= div;
+                    Console.WriteLine(div);
                 }
                 else
                 {
-                    div++;
+                    div += 2;
                 }
+                //iterationCount++;
+            }
+
+            if (n > 1)
+            {
+                Console.WriteLine(n);
+                divides.Add(n);
             }
 
             // Удалить повторы
-            divides = divides.Distinct().ToList();
+            //divides = divides.Distinct().ToList();
 
             return divides;
         }
