@@ -70,7 +70,7 @@ namespace Lab5DP
             bool isPrime = false;
             while (!isPrime)
             {
-                isPrime = IsPrime(bigPrime);
+                isPrime = IsPrimeTest(bigPrime);
                 if (!isPrime)
                     bigPrime += 2;
             }
@@ -94,6 +94,7 @@ namespace Lab5DP
                 else
                 {
                     q = buf;
+                    break;
                 }
             }
 
@@ -119,7 +120,7 @@ namespace Lab5DP
             return true;
         }
 
-        public bool IsPrime(BigInteger number)
+        public bool IsPrimeTest(BigInteger number)
         {  
             List<BigInteger> primeFactors = [];
             primeFactors = TrialDivision(number - 1);
@@ -163,7 +164,7 @@ namespace Lab5DP
                     return !result;
             }
 
-            result = IsPrime(number);
+            result = IsPrimeTest(number);
 
             return result;
         }

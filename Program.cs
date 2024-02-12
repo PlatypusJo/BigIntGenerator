@@ -11,7 +11,7 @@ namespace Lab5DP
             BigIntGenerator generator = new BigIntGenerator();
             // 199991543
             BigInteger integer = BigInteger.Parse("193");
-            bool res = generator.IsPrime(integer);
+            bool res = generator.IsPrimeTest(integer);
             if (res)
             {
                 Console.WriteLine($"{integer} простое");
@@ -24,6 +24,9 @@ namespace Lab5DP
             int l = 5;
             BigInteger big = generator.GenerateBigPrimeNumber(l);
             Console.WriteLine($"Сгенерированное простое число длиной {l} - {big}");
+
+            // 251 - ничего сказать не могёт (слабак)
+            generator.DoMillerTest(561, 2);
         }
     }
 }
