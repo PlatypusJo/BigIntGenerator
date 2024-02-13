@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace Lab5DP
 {
-    public class BigIntGenerator
+    /// <summary>
+    /// Класс для генерации больших чисел.
+    /// </summary>
+    public static class BigIntGenerator
     {
-        private List<BigInteger> _primeNumbers; // Список простых чисел до 5000.
-        private int _maxIterations = 10000000; // Максимальное число итераций для метода проб (по умолчанию 1млн.).
-        public int MaxIterations 
+        private static List<BigInteger> _primeNumbers; // Список простых чисел до 5000.
+        private static int _maxIterations = 10000000; // Максимальное число итераций для метода проб (по умолчанию 10млн.).
+        public static int MaxIterations 
         {
             get => _maxIterations;
             set
@@ -20,28 +23,33 @@ namespace Lab5DP
             }
         }
 
-        public BigIntGenerator()
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        static BigIntGenerator()
         {
             // Создаю список простых чисел до 5000.
-            _primeNumbers = new List<BigInteger>();
+            _primeNumbers = [];
             for (int i = 0; i < 5000; i++)
-            {
                 _primeNumbers.Add(i + 2);
-            }
 
             BigInteger div;
             for (int j = 0; j < _primeNumbers.Count; j++)
             {
                 div = _primeNumbers[j];
                 for (int i = j + 1; i < _primeNumbers.Count; i++)
-                {
                     if (_primeNumbers[i] % div == 0)
                         _primeNumbers.RemoveAt(i);
-                }
             }
         }
 
-        public BigInteger GenerateBigNumber(int length)
+        /// <summary>
+        /// Метод генерации случайного числа заданной длины.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static BigInteger GenerateBigNumber(int length)
         {
             if (length > 1000)
                 throw new ArgumentException("Длина должна быть не больше 1000 символов");
@@ -55,7 +63,13 @@ namespace Lab5DP
             return BigInteger.Parse(number);
         }
         
-        public BigInteger GenerateBigPrimeNumber(int length)
+        /// <summary>
+        /// Метод генерации случайного простого числа заданной длины.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static BigInteger GenerateBigPrimeNumber(int length)
         {
             if (length > 1000)
                 throw new ArgumentException("Длина должна быть не больше 1000 символов");
@@ -78,7 +92,13 @@ namespace Lab5DP
             return bigPrime;
         }
 
-        public bool DoMillerTest(BigInteger number, BigInteger baseValue)
+        /// <summary>
+        /// Метод реализующий тест Миллера.
+        /// </summary>
+        /// <param name="number"> Число для проверки. </param>
+        /// <param name="baseValue"> Основание. </param>
+        /// <returns> Результат проверки. </returns>
+        public static bool DoMillerTest(BigInteger number, BigInteger baseValue)
         {
             BigInteger buf = number - 1;
             BigInteger q = 0;
@@ -120,7 +140,12 @@ namespace Lab5DP
             return true;
         }
 
-        public bool IsPrimeTest(BigInteger number)
+        /// <summary>
+        /// Тест на простоту.
+        /// </summary>
+        /// <param name="number"> Число для проверки. </param>
+        /// <returns> Результат проверки. </returns>
+        public static bool IsPrimeTest(BigInteger number)
         {  
             List<BigInteger> primeFactors = [];
             primeFactors = TrialDivision(number - 1);
@@ -131,15 +156,10 @@ namespace Lab5DP
             {
                 int iterationCount = 0;
                 BigInteger b = 2;
-                while (b < number && !(BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / primeFactors[i - 1], number) != 1))
+                while (b < number && iterationCount < _maxIterations && !(BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / primeFactors[i - 1], number) != 1))
                 {
                     b++;
                     iterationCount++;
-                    if (iterationCount == _maxIterations)
-                    {
-                        iterationCount = 0;
-                        break;
-                    }
                 }
 
                 if (b == number)
@@ -151,7 +171,12 @@ namespace Lab5DP
             return true;
         }
 
-        public bool CheckNumberIsPrime(BigInteger number)
+        /// <summary>
+        /// Проверка на простоту.
+        /// </summary>
+        /// <param name="number"> Число для проверки. </param>
+        /// <returns> Результат проверки. </returns>
+        public static bool CheckNumberIsPrime(BigInteger number)
         {
             bool result = false;
 
@@ -160,7 +185,7 @@ namespace Lab5DP
             {
                 if (number % _primeNumbers[i] == 0 && number != _primeNumbers[i])
                 {
-                    Console.WriteLine("Число составное");
+                    Console.WriteLine($"Число составное. Делитель: {_primeNumbers[i]}");
                     return result;
                 }
             }
@@ -179,8 +204,12 @@ namespace Lab5DP
             return result;
         }
 
-        // Разложение расширенным методом проб (нужно добавить ограничение по итерациям)
-        private List<BigInteger> TrialDivision(BigInteger n)
+        /// <summary>
+        /// Разложение расширенным методом проб.
+        /// </summary>
+        /// <param name="n"> Число. </param>
+        /// <returns> Список простых множителей. </returns>
+        private static List<BigInteger> TrialDivision(BigInteger n)
         {
             List<BigInteger> divides = [];
             int iterationCount = 0;
@@ -196,7 +225,7 @@ namespace Lab5DP
 
             div = 3;
 
-            while (BigInteger.Pow(div, 2) <= n && iterationCount < _maxIterations) // закоментил условие
+            while (BigInteger.Pow(div, 2) <= n && iterationCount < _maxIterations)
             {
                 if (n % div == 0)
                 {
@@ -211,17 +240,11 @@ namespace Lab5DP
                 iterationCount++;
             }
 
-            if (divides.Count == 0 && iterationCount == _maxIterations)
-                return divides;
-
             if (n > 1)
             {
                 Console.WriteLine(n);
                 divides.Add(n);
             }
-
-            // Удалить повторы
-            //divides = divides.Distinct().ToList();
 
             return divides;
         }

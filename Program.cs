@@ -22,12 +22,11 @@ namespace Lab5DP
             //}
             #endregion
 
-            BigIntGenerator generator = new BigIntGenerator();
             string lengthFile = "length.txt";
             string numberFile = "big.txt";
             string inputLength = new StreamReader(lengthFile).ReadToEnd();
             int l = Convert.ToInt32(inputLength);
-            BigInteger big = generator.GenerateBigPrimeNumber(l);
+            BigInteger big = BigIntGenerator.GenerateBigPrimeNumber(l);
 
             StreamWriter writer = new StreamWriter(File.Open("outputPrimeNumber.txt", FileMode.Create));
             writer.WriteLine(big.ToString());
@@ -37,7 +36,7 @@ namespace Lab5DP
             string number = new StreamReader(numberFile).ReadToEnd();
             BigInteger bigInteger = BigInteger.Parse(number);
             string result;
-            if (generator.CheckNumberIsPrime(bigInteger))
+            if (BigIntGenerator.CheckNumberIsPrime(bigInteger))
             {
                 result = $"Число {bigInteger} простое или псевдопростое";
             }
