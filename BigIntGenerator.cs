@@ -10,7 +10,7 @@ namespace Lab5DP
     public class BigIntGenerator
     {
         private List<BigInteger> _primeNumbers; // Список простых чисел до 5000.
-        private int _maxIterations = 1000000; // Максимальное число итераций для метода проб (по умолчанию 1млн.).
+        private int _maxIterations = 10000000; // Максимальное число итераций для метода проб (по умолчанию 1млн.).
         public int MaxIterations 
         {
             get => _maxIterations;
@@ -43,8 +43,8 @@ namespace Lab5DP
 
         public BigInteger GenerateBigNumber(int length)
         {
-            if (length > 150)
-                throw new ArgumentException("Длина должна быть не больше 150 символов");
+            if (length > 1000)
+                throw new ArgumentException("Длина должна быть не больше 1000 символов");
 
             string number = new Random().Next(1, 10).ToString();
             for (int i = 1; i < length; i++)
@@ -57,8 +57,8 @@ namespace Lab5DP
         
         public BigInteger GenerateBigPrimeNumber(int length)
         {
-            if (length > 150)
-                throw new ArgumentException("Длина должна быть не больше 150 символов");
+            if (length > 1000)
+                throw new ArgumentException("Длина должна быть не больше 1000 символов");
 
             // Генерируем большое число
             BigInteger bigPrime = GenerateBigNumber(length);
@@ -70,7 +70,7 @@ namespace Lab5DP
             bool isPrime = false;
             while (!isPrime)
             {
-                isPrime = IsPrimeTest(bigPrime);
+                isPrime = CheckNumberIsPrime(bigPrime);
                 if (!isPrime)
                     bigPrime += 2;
             }
@@ -129,10 +129,17 @@ namespace Lab5DP
 
             while (i <= r)
             {
+                int iterationCount = 0;
                 BigInteger b = 2;
                 while (b < number && !(BigInteger.ModPow(b, number - 1, number) == 1 && BigInteger.ModPow(b, (number - 1) / primeFactors[i - 1], number) != 1))
                 {
                     b++;
+                    iterationCount++;
+                    if (iterationCount == _maxIterations)
+                    {
+                        iterationCount = 0;
+                        break;
+                    }
                 }
 
                 if (b == number)
@@ -148,6 +155,7 @@ namespace Lab5DP
         {
             bool result = false;
 
+            Console.WriteLine("Проверка на простоту делением на простые числа до 5000");
             for (int i = 0; i < _primeNumbers.Count; i++)
             {
                 if (number % _primeNumbers[i] == 0 && number != _primeNumbers[i])
@@ -157,6 +165,7 @@ namespace Lab5DP
                 }
             }
 
+            Console.WriteLine("Проверка на простоту тестом Миллера");
             for (int i = 0; i < 20; i++)
             {
                 result = DoMillerTest(number, _primeNumbers[i]);
@@ -164,6 +173,7 @@ namespace Lab5DP
                     return !result;
             }
 
+            Console.WriteLine("Проверка на простоту тестом на простоту");
             result = IsPrimeTest(number);
 
             return result;
@@ -181,7 +191,7 @@ namespace Lab5DP
                 divides.Add(div);
                 n /= div;
                 Console.WriteLine(div);
-                //iterationCount++;
+                iterationCount++;
             }
 
             div = 3;
@@ -198,8 +208,11 @@ namespace Lab5DP
                 {
                     div += 2;
                 }
-                //iterationCount++;
+                iterationCount++;
             }
+
+            if (divides.Count == 0 && iterationCount == _maxIterations)
+                return divides;
 
             if (n > 1)
             {

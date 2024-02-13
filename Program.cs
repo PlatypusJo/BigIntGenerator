@@ -8,25 +8,48 @@ namespace Lab5DP
     {
         static void Main(string[] args)
         {
-            BigIntGenerator generator = new BigIntGenerator();
+            #region Nothing
             // 199991543
-            BigInteger integer = BigInteger.Parse("193");
-            bool res = generator.IsPrimeTest(integer);
-            if (res)
+            //BigInteger integer = BigInteger.Parse("193");
+            //bool res = generator.IsPrimeTest(integer);
+            //if (res)
+            //{
+            //    Console.WriteLine($"{integer} простое");
+            //}
+            //else
+            //{
+            //    Console.WriteLine($"{integer} не простое");
+            //}
+            #endregion
+
+            BigIntGenerator generator = new BigIntGenerator();
+            string lengthFile = "length.txt";
+            string numberFile = "big.txt";
+            string inputLength = new StreamReader(lengthFile).ReadToEnd();
+            int l = Convert.ToInt32(inputLength);
+            BigInteger big = generator.GenerateBigPrimeNumber(l);
+
+            StreamWriter writer = new StreamWriter(File.Open("outputPrimeNumber.txt", FileMode.Create));
+            writer.WriteLine(big.ToString());
+            writer.Close();
+            Console.WriteLine($"Сгенерированное простое число длиной {l} - {big}");
+
+            string number = new StreamReader(numberFile).ReadToEnd();
+            BigInteger bigInteger = BigInteger.Parse(number);
+            string result;
+            if (generator.CheckNumberIsPrime(bigInteger))
             {
-                Console.WriteLine($"{integer} простое");
+                result = $"Число {bigInteger} простое или псевдопростое";
             }
             else
             {
-                Console.WriteLine($"{integer} не простое");
+                result = $"Число {bigInteger} составное";
             }
 
-            int l = 5;
-            BigInteger big = generator.GenerateBigPrimeNumber(l);
-            Console.WriteLine($"Сгенерированное простое число длиной {l} - {big}");
-
-            // 251 - ничего сказать не могёт (слабак)
-            generator.DoMillerTest(561, 2);
+            writer = new StreamWriter(File.Open("outputTestRes.txt", FileMode.Create));
+            writer.WriteLine(result);
+            writer.Close();
+            Console.WriteLine(result);
         }
     }
 }
