@@ -240,7 +240,7 @@ namespace Lab5DP
                 iterationCount++;
             }
 
-            if (n > 1)
+            if (n > 1 && iterationCount < _maxIterations)
             {
                 Console.WriteLine(n);
                 divides.Add(n);

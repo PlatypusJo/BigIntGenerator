@@ -22,33 +22,60 @@ namespace Lab5DP
             //}
             #endregion
 
-            string lengthFile = "length.txt";
-            string numberFile = "big.txt";
-            string inputLength = new StreamReader(lengthFile).ReadToEnd();
-            int l = Convert.ToInt32(inputLength);
-            BigInteger big = BigIntGenerator.GenerateBigPrimeNumber(l);
+            string filePath;
+            StreamWriter writer;
+            StreamReader reader;
+            ConsoleKey chosen = ConsoleKey.None;
+            Console.WriteLine("Сгенерировать число - G\n Проверить число - T\n Выйти - esc\n");
 
-            StreamWriter writer = new StreamWriter(File.Open("outputPrimeNumber.txt", FileMode.Create));
-            writer.WriteLine(big.ToString());
-            writer.Close();
-            Console.WriteLine($"Сгенерированное простое число длиной {l} - {big}");
-
-            string number = new StreamReader(numberFile).ReadToEnd();
-            BigInteger bigInteger = BigInteger.Parse(number);
-            string result;
-            if (BigIntGenerator.CheckNumberIsPrime(bigInteger))
+            while (chosen != ConsoleKey.Escape)
             {
-                result = $"Число {bigInteger} простое или псевдопростое";
-            }
-            else
-            {
-                result = $"Число {bigInteger} составное";
-            }
+                chosen = Console.ReadKey().Key;
 
-            writer = new StreamWriter(File.Open("outputTestRes.txt", FileMode.Create));
-            writer.WriteLine(result);
-            writer.Close();
-            Console.WriteLine(result);
+                if (chosen == ConsoleKey.G)
+                {
+                    Console.WriteLine("\nВведите путь к файлу, в котором храниться длина числа: ");
+
+                    filePath = Console.ReadLine();
+                    reader = new StreamReader(File.Open(filePath, FileMode.Open));
+                    string inputLength = reader.ReadToEnd();
+                    reader.Close();
+
+                    int l = Convert.ToInt32(inputLength);
+                    BigInteger big = BigIntGenerator.GenerateBigPrimeNumber(l);
+
+                    writer = new StreamWriter(File.Open("outputPrimeNumber.txt", FileMode.Create));
+                    writer.WriteLine(big.ToString());
+                    writer.Close();
+                    Console.WriteLine($"Сгенерированное простое число длиной {l} - {big}");
+                }
+                else if (chosen == ConsoleKey.T)
+                {
+                    Console.WriteLine("\nВведите путь к файлу с числом: ");
+
+                    filePath = Console.ReadLine();
+                    reader = new StreamReader(File.Open(filePath, FileMode.Open));
+                    string number = reader.ReadToEnd();
+                    reader.Close();
+
+                    BigInteger bigInteger = BigInteger.Parse(number);
+                    string result;
+
+                    if (BigIntGenerator.CheckNumberIsPrime(bigInteger))
+                    {
+                        result = $"Число {bigInteger} простое или псевдопростое";
+                    }
+                    else
+                    {
+                        result = $"Число {bigInteger} составное";
+                    }
+
+                    writer = new StreamWriter(File.Open("outputTestRes.txt", FileMode.Create));
+                    writer.WriteLine(result);
+                    writer.Close();
+                    Console.WriteLine(result);
+                }
+            }
         }
     }
 }
